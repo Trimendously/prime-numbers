@@ -27,6 +27,29 @@ class Prime
                 integers[i][1] = 1; // Temporarily marks all ints as primes
               }
         }
+        /* Naive Approach O(N*N) Note: the buckets as defined in main() would be N/8 not sqrt(N)/8
+        void isPrime(int x,int buckets)
+        {
+          int p;
+          if (x == 1) 
+            p = 2; // Starts at 2 since we don't want multiples of 1 (as that's everything)
+          else
+            p = (x-1)*buckets;
+
+          for(; p < x*buckets; p++) // Assumes that 8*buckets = sqrt(N) 
+          {
+            for (int i = 2; i < p; i++)
+            {
+              if (p % i == 0)
+              {
+                integers[p][1] = 0;
+                break;
+              }
+            }
+          }
+        }*/
+
+
         void multiples(int x, int buckets)
         {
           int p;
