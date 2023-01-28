@@ -13,6 +13,7 @@ class Prime
 {
     int **integers; // Array of ints in range [0,10^8)
     int N; // 10^8
+    
     public:
         Prime(int N)
         {
@@ -53,6 +54,7 @@ class Prime
         void multiples(int x, int buckets)
         {
           int p;
+
           if (x == 1) 
             p = 2; // Starts at 2 since we don't want multiples of 1 (as that's everything)
           else
@@ -111,37 +113,33 @@ class Prime
               }
 
           else
-              cout<<"cannot open file "<<file;
+              cout<< "Error opening the file "<<file;
         }
 };
 
-
-
 int main()
 {
+  auto start = high_resolution_clock::now(); // Starts the clock
+
   vector<thread> vecOfThreads; 
-  int execution;
+  int execution; // Keeps track of execution timw
   int N = pow(10,8); // Calcs 10^8
   int buckets =  (int)sqrt(N)/8; // Divides sqrt(10^8) into 8 buckets for each thread
 
-  Prime pr(N);
+  Prime pr(N); // Not done concurrently to avoid overwrites
 
-  // We will now implement Sieve of Eratosthenes using 8 concurrent threads
-  
-  auto start = high_resolution_clock::now(); // Starts the clock
 
-  // Divides the Sieve of Erasthenes space by 8 for 8 threads
-  /* Note: This would be faster if instead of using 8 buckets we could spawn more than 8 threads and iterate over 
-     the integers up to sqrt(N) all within the for loop below
+  /*Divides the space by 8 for 8 threads
+     Note: Pretty sure this implemation would still work fine on the specified machine, since 8 concurent threads being avaialbe would just mean that any
+     additional threads would be put on standby till the other ones are executed.
+      for(int i= 2; i < sqrt(N) ; i++)
+        v.push_back( thread (&Prime::multiples, ref(p), i ) );
+      The bucket implementation is just to ensure that we only spawn in 8 threads as directed.
   */
   for (int x = 1; x < 9; x++)
     vecOfThreads.push_back(thread (&Prime::multiples, ref(pr), x , buckets));
 
-
-  //cout << sqrt(N) << endl;
-
   // Waits for all threads in the vector to join
-
   for (auto& th : vecOfThreads)
     if (th.joinable())
       th.join();    
@@ -150,10 +148,6 @@ int main()
   auto duration = duration_cast<microseconds>(stop - start); 
   
   execution = duration.count();
-  //cout << duration.count() << endl;
-  //cout << execution << endl;
+
   pr.save("primes.txt",execution);
-
-
-  return 0;
 }
